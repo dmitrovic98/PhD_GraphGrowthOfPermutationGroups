@@ -1,55 +1,59 @@
 # EigenBallTest
 
-This directory contains **MAGMA** code for searching for eigenvectors whose support is contained in a ball of a prescribed finite radius in (potentially infinite) voltage covers of graphs.
-
-The code implements a lemma from the thesis concerning the extension-by-zero of certain eigenvectors of induced subgraphs. It was used to find a finite-support $0$-eigenvector over $\mathbb{F}_2$ for a particular $\mathbb{Z}^5$-voltage cover of a $120$-vertex, $4$-valent, $2$-arc-transitive graph discussed in **Section 8.1** of my doctoral thesis.
+This directory contains **Magma** code for searching for eigenvectors whose support is contained in a ball of a prescribed finite radius in (potentially infinite) voltage covers of graphs. The code implements a lemma from my doctoral thesis **Graph growth of permutation groups** concerning the extensions of certain eigenvectors of induced subgraphs. This code has been used to find a finite-support $0$-eigenvector over $\mathbb{F}_2$ for a particular $\mathbb{Z}^5$-voltage cover of a $120$-vertex, $4$-valent, $2$-arc-transitive graph discussed in **Section 8.1** of my doctoral thesis.
 
 ## Files
 
 The directory contains the following files:
 
-* `EigenBallTest.txt` — the main MAGMA code implementing the search algorithm, together with auxiliary functions for working with voltage covers.
-* `T120_GraphData.txt` — data and parameters for applying the algorithm to the particular voltage cover considered in **Chapter 8**, together with an example of an eigenvector found by the search algorithm.
+* `EigenBallTest.txt` — the main Magma code implementing the search algorithm, together with auxiliary functions for working with voltage covers.
+* `T120_GraphData.txt` — data and parameters for applying the algorithm to the particular voltage cover considered in **Chapter 8** of my doctoral thesis, together with an example of an eigenvector found by the search algorithm.
 
-## Usage
+`EigenBallTest.txt` is a tool of independent interest for computing and verifying eigenvectors of voltage covers of arbitrary graphs over $\mathbb{Z}_m$, provided the corresponding graph and voltage-cover parameters are supplied in the same format as in `T120_GraphData.txt`.
 
-`EigenBallTest.txt` is a tool of independent interest for searching for and verifying eigenvectors over $\mathbb{Z}_m$ in voltage covers of arbitrary graphs, provided the corresponding graph and voltage-cover parameters are supplied in the same format as in `T120_GraphData.txt`.
+## Application to constructing graph families with exponentially large eigengroups over $\mathbb{F}_2$
 
----
+The particular case addressed by the code is the $\mathbb{Z}^5$-voltage cover defined in **Construction 8.1.5** of the thesis. This is the voltage cover associated with the $120$-vertex $4$-valent $2$-arc-transitive connected graph referred to as **$T_{120}$** in this repository.
 
-## Where this code is used in the thesis
-
-The mathematical result implemented by this code is **Lemma 7.2.1** from **Section 7.2** of the thesis:
-
-> **Lemma 7.2.1.** (Extension-by-zeros) Let $H$ be an abelian group and let $\phi \in \operatorname{End}(H)$. Let $\Gamma$ be a locally finite graph, let $S \subseteq V\Gamma$, and let $\Gamma_{\overline{S}}$ be the induced subgraph of $\Gamma$ induced by the closure $\overline{S}$ of $S$ in $\Gamma$. If $f \in E_{\phi,H}(\Gamma_{\overline{S}})$ and $f$ vanishes on $\partial S$, then $f$ extends by zeros to an element of $E_{\phi,H}(\Gamma)$.
-
-The corresponding search procedure is described in **Algorithm 7.2.8**, where we take $S = B_r(v)$ to be the ball of radius $r$ around a vertex $v$ in $\Gamma$ and increase the radius $r$ until an eigenvector satisfying the required boundary condition is found.
-
-### Application in Chapter 8
-
-The particular case addressed by the code is the $\mathbb{Z}^5$-voltage cover defined in **Construction 8.1.5** of the thesis. This is the voltage cover associated with the $120$-vertex, $4$-valent, $2$-arc-transitive graph referred to as **$T120$** in this repository.
-
-The underlying graph $T120$ is isomorphic to the Cayley graph
+The underlying graph $T_{120}$ is isomorphic to the Cayley graph
 
 $$
-\operatorname{Cay}\left(S_5,{(1,5),(2,5),(3,5),(4,5)}\right),
+{Cay}\left(S_5, \{(1,5),(2,5),(3,5),(4,5)\} \right),
 $$
 
 as given in **Definition 8.1.1** of the thesis.
 
----
+
+### Verifying the example eigenvector
+
+In order to prove **Theorem 8.1.10**, i.e., prove that the $\mathbb{Z}^5$-voltage cover of $T_{120}$ admits a $0$-eigenvector over $\mathbb{F}_2$ with finite support, it suffices to check that the set $S$ saved in `T120_GraphData.txt` defines such an eigenvector using the verification function
+
+```magma
+IsEigenVectorVoltageGraph
+```
+
+from `EigenBallTest.txt`.
+
+After loading both `EigenBallTest.txt` and `T120_GraphData.txt`, run
+
+```magma
+IsEigenVectorVoltageGraphF2(X, CoTreeARCS, Voltages, S, 2, 0);
+```
+
+The function returns `true` if the corresponding vector satisfies the eigenvector equation over $\mathbb{F}_2$.
 
 ## Mathematical background
 
-### The extension-by-zero lemma
+The mathematical result implemented by this code is **Lemma 7.2.1** from **Section 7.2** of my doctoral thesis:
 
-Let $H$ be an abelian group, let $\phi \in \operatorname{End}(H)$, and let $\Gamma$ be a locally finite graph. The **$\phi$-eigengroup** of $\Gamma$ over $H$, denoted by
+> **Lemma 7.2.1.** [Extension-by-zeros] Let $H$ be an abelian group and let $\phi \in {End}(H)$. Let $\Gamma$ be a locally finite graph, let $S \subseteq V\Gamma$, and let $\Gamma_{\overline{S}}$ be the subgraph of $\Gamma$ induced by the closure $\overline{S}$ of $S$ in $\Gamma$. If $f \in E_{\phi,H}(\Gamma_{\overline{S}})$ and $f$ vanishes on $\partial S$, then $f$ to an element of $E_{\phi,H}(\Gamma)$ with the same support.
 
-$$
-E_{\phi,H}(\Gamma),
-$$
+The corresponding search procedure is described in **Algorithm 7.2.8**, where we take $S$ to be $B_r(v)$, that is the ball of radius $r$ around a vertex $v$ in $\Gamma$, and increase the radius $r$ until an eigenvector satisfying the required boundary condition is found.
 
-consists of all functions $f \colon V\Gamma \to H$ satisfying
+
+### Definitions
+
+Let $H$ be an abelian group, let $\phi \in {End}(H)$, and let $\Gamma$ be a locally finite graph. The **$\phi$-eigengroup** of $\Gamma$ over $H$, denoted by $E_{\phi,H}(\Gamma)$ consists of all functions $f \colon V\Gamma \to H$ satisfying
 
 $$
 \phi(f(v)) = \sum_{u \in \Gamma(v)} f(u)
@@ -61,15 +65,18 @@ Eigengroups generalise eigenspaces of adjacency matrices of graphs over fields. 
 For a subset $S \subseteq V\Gamma$, let $\overline{S}$ denote its **closure** in $\Gamma$ and let $\partial S$ denote its **boundary**, so that
 
 $$
-\overline{S}
-============
-
-# \bigcup_{s\in S} \bigl({s}\cup\Gamma(s)\bigr)
-
-S\cup\partial S.
+\overline{S} = \bigcup_{s\in S} \bigl({s}\cup\Gamma(s)\bigr)
 $$
 
-The **extension-by-zero lemma** states that if
+and
+
+$$
+\partial S = \overline{S}\setminus S.
+$$
+
+Note that $\overline{S} = S \sqcup \partial S$. 
+
+Finally, $\Gamma_{\overline{S}}$ is the induced subgraph of $\Gamma$ induced by $\overline{S}$, meaning that $V\Gamma_{\overline{S}} = \overline{S}$ with two vertices adjacent if and only if they are adjacent in $\Gamma$. The Extension-by-zeros Lemma states that if
 
 $$
 f \in E_{\phi,H}(\Gamma_{\overline{S}})
@@ -77,7 +84,7 @@ $$
 
 and $f$ vanishes on $\partial S$, then extending $f$ by zero outside $\overline{S}$ gives an element of $E_{\phi,H}(\Gamma)$ with the same support.
 
-In other words, if $f$ is an eigenvector of the subgraph induced by $\overline{S}$ and
+In other words, if $f$ is an eigenvector of $\Gamma_{\overline{S}}$ and
 
 $$
 f(v)=0
@@ -90,22 +97,20 @@ then $f$ can be extended by zero to an eigenvector of the full graph $\Gamma$ wi
 The code exploits this lemma by taking $S$ to be a ball
 
 $$
-S = B_\Gamma(v,r)
+S = B_r(v)
 $$
 
 of radius $r$ around a chosen vertex $v$. In this case,
 
 $$
-\overline{S}=B_\Gamma(v,r+1),
+\overline{S}=B_{r+1}(v),
 $$
 
 and $\partial S$ consists precisely of the vertices at distance $r+1$ from $v$.
 
-Consequently, to find an eigenvector supported inside $B_\Gamma(v,r)$, it is enough to search for an eigenvector of the subgraph induced by $B_\Gamma(v,r+1)$ that vanishes on the boundary of $B_\Gamma(v,r)$.
+Consequently, to find an eigenvector supported inside $B_r(v)$, it is enough to search for an eigenvector of the subgraph induced by $B_{r+1}(v)$ that vanishes on the boundary of $B_r(v)$.
 
-This is precisely the search performed by the main function in `EigenBallTest.txt`: for increasing values of $r$, it constructs the induced subgraph on $B_\Gamma(v,r+1)$ and searches for an appropriate eigenvector satisfying the required boundary conditions.
-
----
+This is precisely the search performed by the main function in `EigenBallTest.txt`. For increasing values of $r$, the code constructs the induced subgraph on $B_{r+1}(v)$ and searches for an appropriate eigenvector satisfying the required boundary conditions.
 
 ## Voltage-cover representation
 
@@ -123,7 +128,7 @@ $$
 (j,\mathbf{v}+e).
 $$
 
-In the $T120$ example, the voltage group is $\mathbb{Z}^5$.
+In the case of $T_{120}$, the voltage group is $\mathbb{Z}^5$.
 
 The voltage data are supplied through the following variables:
 
@@ -131,13 +136,7 @@ The voltage data are supplied through the following variables:
 * `CoTreeARCS` — the edges of $X$ not contained in a fixed spanning tree of $X$, together with a chosen orientation for each edge;
 * `Voltages` — the voltage vectors corresponding to the oriented edges in `CoTreeARCS`.
 
-The lists `CoTreeARCS` and `Voltages` must have the same ordering. The voltage associated with an oriented edge is given by the corresponding entry of `Voltages`. If the edge is traversed in the opposite direction, the voltage is negated.
-
-This convention is implemented by the function `AssignVoltage`.
-
-The function `NeighboursInAVoltageGraph` uses these voltage assignments to determine the neighbours of a vertex in the voltage cover.
-
----
+The lists `CoTreeARCS` and `Voltages` must have the same ordering. The voltage associated with an oriented edge is given by the corresponding entry of `Voltages`. If the edge is traversed in the opposite direction, the voltage is negated. This rule in implemented in `AssignVoltage`. The function `NeighboursInAVoltageGraph` uses these voltage assignments to determine the neighbours of a vertex in the voltage cover.
 
 ## How the algorithm works
 
@@ -151,9 +150,9 @@ It takes a base graph, voltage data, a starting vertex, a maximum radius, a modu
 
 For each radius
 
-[
-r=0,1,\ldots,R,
-]
+$$
+r\in [0,1,\ldots,R],
+$$
 
 the algorithm performs the following steps.
 
@@ -161,9 +160,9 @@ the algorithm performs the following steps.
 
 Starting from the chosen vertex $v$, the algorithm constructs
 
-[
-S=B(v,r)
-]
+$$
+S=B_r(v)
+$$
 
 in the voltage cover.
 
@@ -173,9 +172,9 @@ The boundary of $S$ is maintained separately.
 
 The closure
 
-[
-\overline{S}=B(v,r+1)
-]
+$$
+\overline{S}=B_{r+1}(v)
+$$
 
 is constructed by adjoining the boundary of $S$.
 
@@ -185,18 +184,19 @@ The code also records the edges in the induced graph on this set.
 
 The graph
 
-[
-Y=\Gamma[\overline{S}]
-]
+$$
+Y=\Gamma_{\overline{S}}
+$$
 
 induced by the closure of $S$ is constructed.
 
 ### 4. Impose the eigenvector equation
 
-Let $A$ be the adjacency matrix of $Y$. To search for an appropriate eigenvector with eigenvalue $t$, the code considers the kernel of
-[
-A-tI.
-]
+Let $A$ be the adjacency matrix of $Y$ over $\mathbb{Z}_m$. To search for an appropriate eigenvector with eigenvalue $t$, the code considers the kernel of
+
+$$
+A-tI,
+$$
 
 where the the entries corresponding to vertices in the boundary of $S$ are then constrained to be zero.
 
@@ -207,104 +207,22 @@ Thus, the kernel being computed consists precisely of the vectors which satisfy 
 
 ### 5. Search for a nonzero kernel vector
 
-If the resulting matrix has a nonzero kernel vector, the algorithm returns:
-
-* `true`, indicating that a suitable eigenvector was found;
-* the radius (r);
-* a nonzero kernel vector;
-* its support, where each vertex is paired up with the value of the vector at that vertex.
-
-If no suitable eigenvector is found for any radius up to $R$, the function returns `false`.
-
-
-
-
-
-## How the algorithm works
-
-The main search function is
+The has an output of the form
 
 ```magma
-EigenTestForBallsRadiusAtMostRInVoltageGraph
+b, r, f, S
 ```
 
-It takes a base graph, voltage data, a starting vertex, a maximum radius, a modulus, and a proposed eigenvalue.
+where:
 
-For each radius
+* `b` boolean value indicating whether a suitable eigenvector was found;
+* `r` is the first radius at which one was found;
+* `f` is a nonzero vector satisfying the required conditions;
+* `S` is the support of the vector along with the corresponding values;
 
-$$
-r=0,1,\ldots,R,
-$$
+If no suitable eigenvector is found for any radius up to $R$, the function returns `false` and an empty result.
 
-the algorithm performs the following steps.
-
-### 1. Construct the ball
-
-Starting from the chosen vertex $v$, the algorithm constructs the ball
-
-$$
-S=B_\Gamma(v,r)
-$$
-
-in the voltage cover $\Gamma$.
-
-The boundary $\partial S$ is maintained separately.
-
-### 2. Construct the closure
-
-The closure of $S$ is
-
-$$
-\overline{S}=B_\Gamma(v,r+1).
-$$
-
-The algorithm constructs this larger ball by adjoining the boundary of $S$ and records the edges between vertices in the resulting set.
-
-### 3. Construct the induced graph
-
-The induced subgraph
-
-$$
-Y=\Gamma[\overline{S}]
-$$
-
-is constructed from the vertices and edges recorded in the previous step.
-
-### 4. Impose the eigenvector equation and boundary conditions
-
-Let $A$ be the adjacency matrix of $Y$. To search for an eigenvector with eigenvalue $t$, the code considers the system
-
-$$
-(A-tI)f=0
-$$
-
-over the specified coefficient ring, together with the additional conditions
-
-$$
-f(v)=0
-\qquad\text{for every }v\in\partial S.
-$$
-
-Thus, the resulting kernel consists precisely of the vectors that satisfy both:
-
-1. the eigenvector equation on the induced graph $Y$; and
-2. the required zero conditions on the boundary of $S$.
-
-### 5. Search for a nonzero kernel vector
-
-If the resulting system has a nonzero solution, the algorithm returns:
-
-* `true`, indicating that a suitable eigenvector was found;
-* the radius `r` at which it was found;
-* a nonzero kernel vector; and
-* its support, with each vertex paired with the corresponding value of the eigenvector.
-
-If no suitable eigenvector is found for any radius up to $R$, the function returns `false`.
-
-
----
-
-## Main functions
+## Auxiliary functions
 
 ### `AssignVoltage`
 
@@ -316,8 +234,6 @@ Returns the voltage associated with the oriented edge $e$.
 
 If the reverse orientation of an edge in `CoTreeARCS` is supplied, the corresponding voltage is negated.
 
----
-
 ### `NeighboursInAVoltageGraph`
 
 ```magma
@@ -327,8 +243,6 @@ NeighboursInAVoltageGraph(X, CoTreeARCS, Voltages, v)
 Returns the neighbours of the vertex $v$ in the voltage cover.
 
 A voltage-cover vertex is represented as a pair consisting of a base-graph vertex and a voltage-group element. The function determines the corresponding neighbours in the base graph and adds the appropriate voltage to the second coordinate.
-
----
 
 ### `BallInVoltageGraph`
 
@@ -346,39 +260,6 @@ The function returns information describing:
 
 This is used internally by the main eigenvector-search function.
 
----
-
-### `EigenTestForBallsRadiusAtMostRInVoltageGraph`
-
-```magma
-EigenTestForBallsRadiusAtMostRInVoltageGraph(
-    X, CoTreeARCS, Voltages, v, R, m, t
-)
-```
-
-This is the main function of the file.
-
-It searches balls of radius at most $R$ centred at $v$ for an eigenvector with eigenvalue $t$ satisfying the zero-boundary condition from the extension-by-zero lemma.
-
-The parameter $m$ determines the coefficient ring $\mathbb{Z}_m$ used for the kernel computation.
-
-The output has the form
-
-```magma
-b, r, f, S
-```
-
-where:
-
-* `b` boolean value indicating whether a suitable eigenvector was found;
-* `r` is the first radius at which one was found;
-* `f` is a nonzero vector satisfying the required conditions;
-* `S` is the support of the vector along with the corresponding values;
-
-If no vector is found, the function returns `false` together with an empty result.
-
----
-
 ### `IsEigenVectorVoltageGraph`
 
 ```magma
@@ -391,13 +272,13 @@ Here $S$ specifies the support of a vector alongside the corresponding values. T
 
 This provides a convenient way of independently checking an eigenvector obtained from the search (or from other sources).
 
----
 
-## T120 example
 
-The file `EigenBallTest_T120.txt` contains the data needed to run the search on the particular voltage cover used in Chapter 8.
+## $T_{120}$ 
 
-The base graph is a graph on (120) vertices. The file explicitly defines its edge set and a collection of oriented arcs, and then supplies the corresponding voltage data.
+The file `T120_GraphData.txt` contains the data needed to run the search on the particular voltage cover used in Chapter 8.
+
+The base graph is a graph on $120$ vertices. The file explicitly defines its edge set and a collection of oriented arcs, and then supplies the corresponding voltage data.
 
 The voltage group is represented by
 
@@ -407,11 +288,13 @@ Z5 := RSpace(Z,5);
 
 so that vertices in the voltage cover are represented using elements of $\mathbb{Z}^5$.
 
-The file then converts the voltage matrix into a list `Voltages`, matching the ordering of the oriented arcs, and runs the main search with
+The file also contains the list `Voltages`, matching the ordering of the oriented arcs.
+
+One can run the main search by calling
 
 ```magma
 EigenTestForBallsRadiusAtMostRInVoltageGraph(
-    X, ARCS, Vol, <1, Z5!0>, 9, 2, 0
+    X, CoTreeARCS, Voltages, <1, Z5!0>, 9, 2, 0
 );
 ```
 
@@ -421,13 +304,13 @@ Thus, this example searches for an eigenvector with eigenvalue $0$ over $\mathbb
 <1, Z5!0>
 ```
 
-of the voltage cover.
+of the voltage cover of $X$.
 
 ## Example eigenvector
 
-The file `EigenBallTest_T120.txt` also contains one eigenvector found using the search above.
+The file `T120_GraphData.txt` also contains one eigenvector found using the search above.
 
-The vector is represented by a set of pairs
+The eigenvector is given in terms of its support set, whose elements are of the form
 
 ```magma
 < <base_vertex, voltage_vector>, value_at_vertex>
@@ -443,86 +326,65 @@ For example, an entry of the form
 
 represents the voltage-cover vertex whose base-graph coordinate is `47` and voltage coordinate is ([0,1,1,1,0]). The eigenvector takes values $1$ at this vertex.
 
----
-
-## Verifying the example eigenvector
-
-The saved eigenvector can be checked using the verification function
-
-```magma
-IsEigenVectorVoltageGraphF2
-```
-
-from `EigenBallTest.txt`.
-
-After loading both `EigenBallTest.txt`. and `EigenBallTest_T120.txt`, one can evaluate
-
-```magma
-IsEigenVectorVoltageGraphF2(X, ARCS, Voltages, S, 2, 0);
-```
-
-where $S$ is the support recorded in `EigenBallTest_T120.txt`. The function returns `true` if the corresponding vector satisfies the eigenvector equation over $\mathbb{F}_2$.
-
----
-
 ## Reproducing the computation
 
-To compute more eigenvectors of the $\mathbb{Z}^5$-voltage cover of $T120$ perform the following steps:
+To compute more eigenvectors of the $\mathbb{Z}^5$-voltage cover of $T_{120}$ perform the following steps:
 
 1. Load the file `EigenBallTest.txt` containing the relevant methods.
-2. Load the file `EigenBallTest_T120.txt` containing the relevant data on T120.
+2. Load the file `T120_GraphData.txt` containing the relevant data on $T_{120}$.
 3. Run `EigenTestForBallsRadiusAtMostRInVoltageGraph(X,CoTreeARCS,Voltages,<1,Z5!0>,R,2,0);` for some integer $R \geq 9$.
 4. Inspect the returned values `b`, `r`, `v`, and `S`.
----
-5. Optionally, verify that the set $S$ saved in `EigenBallTest_T120.txt` defines an eigenvector using `IsEigenVectorVoltageGraphF2(X, CoTreeARCS, Voltages, S, 2, 0);`.
 
-The T120 file already contains a complete example call, so it can also be used as a template for applying the search to other voltage covers.
+
+For the purposes of the results in Chapter 8 of the thesis, it suffices to verify that the set $S$ saved in `T120_GraphData.txt` defines a $0$-eigenvector of the $\mathbb{Z}^5$-voltage cover of $X$ over $\mathbb{F}_2$ with support of size $296$ by running
+
+```magma
+IsEigenVectorVoltageGraphF2(X, CoTreeARCS, Voltages, S, 2, 0);
+```
+
+
 
 To adapt the computation to a different voltage cover, the principal data that need to be replaced are:
 
 * the base graph `X`;
-* the oriented arc list `ARCS`;
+* the oriented arc list `CoTreeARCS`;
 * the corresponding voltage list `Voltages`;
+
+Then one needs to run the main search algorithm with some appropriate choice of
+
 * the starting vertex;
 * the maximum radius `R`;
 * the modulus `m`;
 * the eigenvalue `t`.
 
----
+
 
 ## Notes
 
 * The main search function stops as soon as it finds a suitable nonzero vector, so the returned radius is the first radius at which the search succeeds.
 * The voltage data must be ordered consistently with `CoTreeARCS`.
-* Reversing the orientation of an edge changes the sign of its voltage.
-* The main search routine allows computations over `Integers(m)`, while `IsEigenVectorVoltageGraphF2` is specifically implemented over (\mathbb F_2).
-* The supplied T120 data are intended both as a reproducible example and as a template for adapting the code to other voltage covers.
+* The supplied $T_{120}$ data are intended both as a reproducible example and as a template for adapting the code to other voltage covers.
 
----
+
 
 ## Source and attribution
 
-The mathematical basis for the computation is the extension-by-zero lemma stated in **[Lemma 7.2.1 of the thesis]**.
+The mathematical basis for the computation is the Extension-by-zeros Lemma stated in (Lemma 7.2.1 in my doctoral thesis).
 
-The implementation of the voltage-cover search is part of the computational work accompanying the thesis.
+The implementation of the voltage-cover search algorithm is part of the computational work accompanying the thesis.
 
-[Insert here the appropriate citation for the source on which the implementation or voltage-cover construction is based.]
+If the code is reused or modified, please cite my doctoral thesis:
 
-If the code is reused or modified, please cite:
+> **Đ. Mitrović, *Graph Growth of Permutation Groups*, University of Auckland, 2026].**
 
-> **Đ. Mitrović, *[Graph Growth of Permutation Groups]*, University of Auckland, 2026].**
-
----
 
 ## Requirements
 
-The code requires **MAGMA** with support for:
+The code requires **Magma** with support for:
 
-* finite and integer matrix computations;
-* graph constructions;
-* vector spaces and modules;
-* kernel computations.
+* Linear Algebra (finite and integer matrix computations, constructions of vector spaces and modules, kernel computations);
+* Graph Theory (graph constructions, computation of the adjacency matrix);
 
-No additional external packages are required.
+All of the above are contained in the standard installation of **Magma**. No additional external packages are required.
 
 The code has been tested using MAGMA V2.29-6.
