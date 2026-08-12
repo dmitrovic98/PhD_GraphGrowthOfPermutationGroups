@@ -1,0 +1,126 @@
+/* Here CoTreeARCS and Voltages are ordered the same */
+/* The elements of Voltages need to be vectors in an appropriate vector space */
+/* Vertices of the Voltage Cover are labelled by < Index of a Vertex of X , Vector > */
+/* Note by being apply to supply our own CoTreeARCS and Voltages we have full control on the labelling of the vertices of the cover */
+
+AssignVoltage := function(CoTreeARCS, Voltages, e)
+	f := <e[2],e[1]>;
+	for i in [1..#CoTreeARCS] do
+		x := CoTreeARCS[i];
+		if e eq x then return Voltages[i]; end if;
+		if f eq x then return -Voltages[i]; end if;
+	end for;
+	return (Voltages[1]-Voltages[1]);
+end function;
+
+NeighboursInAVoltageGraph := function(X,CoTreeARCS,Voltages,v)
+	vvex := v[1];
+	vvec := v[2];
+	S := {@ @};
+	N := Neighbours(VertexSet(X)!vvex);
+	for u in N do
+		i := Index(u);
+		S := S join {@ <i,vvec + AssignVoltage(CoTreeARCS,Voltages,<vvex,i>)> @};
+	end for;
+	return S;
+end function;
+
+BallInVoltageGraph := function(X,CoTreeARCS,Voltages,v,r)
+	if (r eq 0) then
+		return {@ v @}, NeighboursInAVoltageGraph(X,CoTreeARCS,Voltages,v) diff {@ v @}, {@ @};
+	else
+		VB, BB, EB := $$(X,CoTreeARCS,Voltages,v,r-1);
+		NewVB := VB join BB;
+		NewBB := {@ @};
+		NewEB := EB;
+		for u in BB do
+			Nu := NeighboursInAVoltageGraph(X,CoTreeARCS,Voltages,u);
+			NewEB := NewEB join {{u,w} : w in (Nu meet NewVB)};
+			NewBB := NewBB join (Nu diff NewVB);
+		end for;
+		return NewVB, NewBB, NewEB;
+	end if;
+
+end function;
+
+/* Lemma: (PhD Thesis "Graph Growth of Permutation Groups", Chapter 7)*/
+/* Let X be a locally finite graph and let S <= VX. If f is an eigenvector of the subgraph of X induced by the closure of S that vanishes on the boundary of S, then f extends by 0s to an eigenvector of X */
+/* If S = B(v,r), then Sbar = B(v,r+1) and we want to vanish on the boundary of B(v,r) i.e. the set of vertices at distance precisely (r+1) from v */
+
+/* The following function recursively constructs balls of radius at most r centered at v and tests each of them for suitable eigenvectors according to the above Lemma */
+
+EigenTestForBallsRadiusAtMostRInVoltageGraph := function(X,CoTreeARCS,Voltages,v,R,m,t)
+
+	S := {@ v @};
+	BoundaryOfS := NeighboursInAVoltageGraph(X,CoTreeARCS,Voltages,v) diff {v};
+	EdgesInS := {@ @};
+
+	for r in [0..R] do
+
+		/* Applying the lemma with S = B(v,r) */
+
+		print "Testing S = B(v,r) for r = ", r;
+
+		Sbar := S join BoundaryOfS;
+		NewBoundary := {@ @};
+		for u in BoundaryOfS do
+			Nu := NeighboursInAVoltageGraph(X,CoTreeARCS,Voltages,u);
+			NewBoundary := NewBoundary join (Nu diff Sbar);
+			EdgesInS := EdgesInS join {{u,w} : w in (Nu meet Sbar)};
+		end for;
+
+		Y := Graph<Sbar | EdgesInS>;
+		VY := VertexSet(Y);
+
+		Zm := IntegerRing(m);
+		I := IdentityMatrix(Zm,#VY);
+		A := Matrix(Zm,AdjacencyMatrix(Y)) - t*I;
+		for s in BoundaryOfS do
+			A := HorizontalJoin(A,Transpose(Matrix(I[Index(VY!s)])));
+		end for;
+		K := Kernel(A);
+		NonZeroK := Set(K) diff {K!0};
+		q := #NonZeroK;
+
+		if (q gt 0) then 
+			f := Rep(NonZeroK);
+			Type(Rep(Support(f)));
+			return true, r, f, [<Sbar[i],f[i]> : i in Support(f)];
+		end if;
+
+		S := Sbar;
+		BoundaryOfS := NewBoundary;
+
+	end for;
+
+	return false, -1, K!0, [];
+
+end function;
+
+/* Test Voltage EigenVectors */
+/* The function assumes the vectors is given in terms of its support and values at vertices in the support */
+/* In particular, S = { < <v,w>, f(<v,w>) > : v,w...} */
+
+IsEigenVectorVoltageGraph := function(X,CoTreeARCS,Voltages,S,m,t)
+	Zm := Integers(m);
+	Sbar := {@ @};
+	Ebar := {@ @};
+	for s in S do
+		Ns := NeighboursInAVoltageGraph(X,CoTreeARCS,Voltages,s[1]);
+		Sbar := Sbar join {s[1]} join Ns;
+		Ebar := Ebar join {{s[1],ss} : ss in Ns};
+	end for;
+	Y := Graph< Sbar | Ebar >;
+	A := Matrix(Zm, AdjacencyMatrix(Y));
+	f := [];
+	for i in [1..#Sbar] do
+		Match := [s : s in S | s[1] eq Sbar[i]];
+		if #Match eq 0 then
+			f := Append(f,0);
+		else
+			f := Append(f,Zm!(Match[1])[2]);	
+		end if;
+	end for;
+	ff := Matrix(Zm, 1, #Sbar, f);
+	return ff * A eq (Zm!t) * ff;
+end function;
