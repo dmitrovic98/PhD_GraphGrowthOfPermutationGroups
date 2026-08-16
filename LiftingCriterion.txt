@@ -1,0 +1,70 @@
+ApplyMap := function(ntuple,s)
+	n := #ntuple;
+	t := <>;
+	for i in [1..n] do
+		t := Append(t,(ntuple[i])^s);
+	end for;
+	return t;
+end function;
+
+ApplyMapToCycle := function(C,s)
+	Cs := <>;
+	l := #C;
+	for i in [1..l] do
+		Cs := Append(Cs,ApplyMap(C[i],s));
+	end for;
+	return Cs;
+end function;
+
+CycleCoef := function(CoTreeARCS,C)
+	coef := [];
+	for i in [1..#CoTreeARCS] do
+		x := CoTreeARCS[i];
+		invx := <x[2],x[1]>;
+		for a in C do
+			if a eq x then coef := Append(coef,1); end if;
+			if a eq invx then coef := Append(coef,-1);end if; 
+		end for;
+		if #coef eq (i-1) then coef := Append(coef,0); end if;
+	end for;
+	return coef;
+end function;
+
+MatrixOnHomology := function(GenH1, CoTreeARCS, R,s)
+	d := #GenH1;
+	Q := [];
+	for i in [1..d] do
+		C := ApplyMapToCycle(GenH1[i],s);
+		Coef := CycleCoef(CoTreeARCS, C);
+		Q := Append(Q,Coef);
+	end for;
+	return Transpose(Matrix(R,d,d,Q));
+end function;
+
+AssignVoltage := function(Voltages, CoTreeARCS, W, e)
+	f := <e[2],e[1]>;
+	for i in [1..#CoTreeARCS] do
+		ithARC := CoTreeARCS[i];
+		if e eq ithARC then return Voltages[i]; end if;
+		if f eq ithARC then return -Voltages[i]; end if;
+	end for;
+	return W!0;
+end function;
+
+VoltageOfACycle := function(Voltages,W,C)
+	w := W!0;
+	for e in C do
+		w := w + AssignVoltage(Voltages, CoTreeARCS, W,e);
+	end for;
+	return w;
+end function;
+
+LiftingCriterion := function(Voltages, GenH1, CoTreeARCS, R, dim, g, sigma)
+	W := RSpace(R,dim);
+	for C in GenH1 do
+		a := VoltageOfACycle(Voltages, W,C) * sigma;
+		b := VoltageOfACycle(Voltages, W, ApplyMapToCycle(C,g));
+		if not (a eq b) then return false; end if;
+	end for;
+	return true;
+end function;
