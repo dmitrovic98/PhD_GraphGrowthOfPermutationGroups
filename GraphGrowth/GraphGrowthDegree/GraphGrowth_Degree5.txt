@@ -1,0 +1,6 @@
+Degree5_Constant  := [ 1, 2, 3, 4, 5 ];
+Degree5_Polynomial  := [];
+Degree5_Exponential  := [];
+Degree5_ConjConstant  := [];
+Degree5_ConjPolynomial  := [];
+Degree5_ConjExponential  := [];

@@ -1,0 +1,6 @@
+Degree7_Constant  := [ 1, 2, 3, 4, 5, 6, 7 ];
+Degree7_Polynomial  := [];
+Degree7_Exponential  := [];
+Degree7_ConjConstant  := [];
+Degree7_ConjPolynomial  := [];
+Degree7_ConjExponential  := [];

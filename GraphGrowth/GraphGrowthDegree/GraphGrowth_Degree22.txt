@@ -1,0 +1,7 @@
+Degree22_Constant  := [ 1, 2, 22, 26, 38, 41, 58, 59 ];
+Degree22_Polynomial  := [ 3, 4, 5 ];
+Degree22_Exponential  := [ 7, 8, 9, 10, 11, 12, 15, 16, 17, 18, 19, 20, 21, 23, 
+24, 25, 28, 29, 30, 31, 32, 36, 37, 40, 42, 44, 48, 52, 53, 54, 55, 56, 57 ];
+Degree22_ConjConstant  := [];
+Degree22_ConjPolynomial  := [ 6, 13, 14, 27, 45, 46, 47 ];
+Degree22_ConjExponential  := [ 33, 34, 35, 39, 43, 49, 50, 51 ];

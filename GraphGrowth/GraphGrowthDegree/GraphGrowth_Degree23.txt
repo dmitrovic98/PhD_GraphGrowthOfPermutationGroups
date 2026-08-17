@@ -1,0 +1,6 @@
+Degree23_Constant  := [ 1, 2, 3, 4, 5, 6, 7 ];
+Degree23_Polynomial  := [];
+Degree23_Exponential  := [];
+Degree23_ConjConstant  := [];
+Degree23_ConjPolynomial  := [];
+Degree23_ConjExponential  := [];

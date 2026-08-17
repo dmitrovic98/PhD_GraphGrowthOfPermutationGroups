@@ -1,0 +1,7 @@
+Degree8_Constant  := [ 1, 2, 3, 4, 5, 12, 23, 25, 36, 37, 43, 48, 49, 50 ];
+Degree8_Polynomial  := [ 6, 8, 13, 14 ];
+Degree8_Exponential  := [ 7, 9, 10, 11, 15, 16, 17, 18, 19, 20, 21, 22, 26, 27, 
+28, 29, 30, 31, 32, 33, 34, 35, 38, 39, 40, 41, 42, 44, 45, 46, 47 ];
+Degree8_ConjConstant  := [];
+Degree8_ConjPolynomial  := [ 24 ];
+Degree8_ConjExponential  := [];

@@ -1,0 +1,6 @@
+Degree29_Constant  := [ 1, 2, 3, 4, 5, 6, 7, 8 ];
+Degree29_Polynomial  := [];
+Degree29_Exponential  := [];
+Degree29_ConjConstant  := [];
+Degree29_ConjPolynomial  := [];
+Degree29_ConjExponential  := [];

@@ -1,0 +1,6 @@
+Degree41_Constant  := [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ];
+Degree41_Polynomial  := [];
+Degree41_Exponential  := [];
+Degree41_ConjConstant  := [];
+Degree41_ConjPolynomial  := [];
+Degree41_ConjExponential  := [];

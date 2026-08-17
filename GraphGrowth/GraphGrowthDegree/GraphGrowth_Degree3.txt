@@ -1,0 +1,6 @@
+Degree3_Constant  := [ 1, 2 ];
+Degree3_Polynomial  := [];
+Degree3_Exponential  := [];
+Degree3_ConjConstant  := [];
+Degree3_ConjPolynomial  := [];
+Degree3_ConjExponential  := [];
