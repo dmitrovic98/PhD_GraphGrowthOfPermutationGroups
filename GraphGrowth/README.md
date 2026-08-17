@@ -11,7 +11,8 @@ The repository also contains separate data files for each degree $2$ through $47
 
 ### `GraphGrowthTheorems.txt`
 
-Contains statements of the individual results from the literature, their references and MAGMA implementations with additional comments for clarity where needed. These results form the building blocks of the main decision procedure but can also be applied independently.
+Contains statements of the individual results from the literature, their references and MAGMA implementations with additional comments for clarity where needed. This file also includes the new groups whose graph growth was determined as part of this thesis. These results form the building blocks of the main decision procedure but can also be applied independently. 
+
 
 ### `GraphGrowthTest.txt`
 
