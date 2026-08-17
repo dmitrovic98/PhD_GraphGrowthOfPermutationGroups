@@ -1,0 +1,248 @@
+/* Graph Growth Test */
+/* Data obtained is discussed in Chapter 9 of my PhD Thesis (Graph Growth of Permutation Groups) */
+
+
+/************************************************************************************* List of IDs *************************************************************************************************************/
+
+/* Lists of IDs of specific permutation groups whose Graph Growth is known */
+/* See related Magma files for theorems and code determining these IDs */
+
+/* CONSTANT */
+SnOnOrderedPairs := [<6,2>,<12,8>,<20,30>,<30,164>,<42,412>];
+PSLonSubSpaces := [<35,36>, <35,44>];
+FrobeniusGrps := [<3,2>, <9,5>, <27,7>];
+
+CONSTANT := SnOnOrderedPairs cat PSLonSubSpaces cat FrobeniusGrps;
+
+/* EXPONENTIAL */
+
+EIGEN :=    [ <6,4>, <6,7>, <6,8> ] cat
+	    [ <12, 32>, <12, 67>, <12, 68> ] cat
+	    [ <24, 390>, <24, 1065>, <24, 1066> ] cat 
+	    [ <8,32>, <8,39>, <8,40> ] cat
+	    [ <16, 1071>, <16, 1322>, <16, 1324>,] cat
+	    [ <32, 397781>, <32, 720905>, <32, 720906> ] cat
+	    [ <10, 8>, <10, 15>, <10, 16>,
+	      <14, 21>, <14, 28>, <14, 27>,
+	      <22, 23>, <22, 30>, <22, 29>,
+	      <26, 64>, <26, 65>, <26, 66>,
+	      <34, 69>, <34, 72>, <34, 71>,
+	      <38, 48>, <38, 50>, <38, 51>,
+	      <46, 28>, <46, 30>, <46, 31> ] cat
+	    [ <20, 190>, <20, 240>, <20, 260>,
+	      <28, 478>, <28, 587>, <28, 575>,
+	      <44, 564>, <44, 774>, <44, 751> ] cat
+	    [ <40, 14020>, <40, 18338>, <40, 18337>]; 
+
+/************************************************************************************* AUXILIARY FUNCTIONS  *************************************************************************************************************/
+
+/* See Chapter 9 as well as GraphGrowth_Methods.mgm for more details on these methods */
+
+/**** p-graph-restrictive methods ****/
+
+IspGraphResALLSemiPrimitive := function(L)
+
+	/* Because of where this function appears in the search, we already know that L is semiprimitive */
+	/* Otherwise, we need to include an additional check below when computing the p-Core of L1 */
+
+	L1 := Stabiliser(L,1);
+	PrimeDivsStab := PrimeDivisors(Order(L1));
+	for p in PrimeDivsStab do
+		if (Order(pCore(L1,p)) eq 1) then continue; end if;
+		Sylp := Sylow(L1,p);
+		if not (#Sylp eq p) then return false; end if;
+		IspGraphRes := false;
+		for l in L do
+			P := sub<L|Sylp,Sylp^l>;
+			if IsTransitive(P) then IspGraphRes := true; break; end if;
+		end for;
+		if not IspGraphRes then return false; end if;
+	end for;
+	return true;
+end function;
+
+
+/**** Nilpotent subgroups ****/
+
+/* Check whether a group G is isomorphic to a some power of the group H */
+
+IsGaPowerOfH:= function(G, H)
+	n := Order(G);
+	m := Order(H);
+	k := Log(m,n);
+	if IsIntegral(k) then
+		GG := DirectProduct([ H : i in [1..k] ]);
+		b, _ := IsIsomorphic(G,GG);
+		return b;
+	else
+		return false;
+	end if;
+end function;
+
+RegNilSubGrpTest := function(L)
+
+	/* Because of where this function appears in the search, we already know that L is semiprimitive */
+	/* Otherwise, we need to include an additional check below */
+
+	AllNormal := [ Cl`subgroup : Cl in NormalSubgroups(L) ];
+	ListOfRs := [ R : R in AllNormal | IsRegular(R) and IsNilpotent(R) ];
+
+	if (#ListOfRs eq 0) then
+		return false;
+	elif (GCD(Degree(L),6) eq 1) then
+		return true;
+	else
+		S3 := Sym(3);
+		A4 := Alt(4);
+		for R in ListOfRs do
+			ListOfFs := [ F : F in AllNormal | (F subset R) and (Order(F) lt Order(R)) ];
+			ListOfJs := [ J : J in AllNormal | (R subset J) and (Order(R) lt Order(J)) ];
+			for F in ListOfFs do
+				for J in ListOfJs do
+					G := J/F;
+					if IsGaPowerOfH(G,S3) or IsGaPowerOfH(G,A4) then
+						return false;
+					end if;
+				end for;
+			end for;
+		end for;
+		return true;
+	end if;
+end function;
+
+/************************************************************************************* POLY and EXP Conjectures *************************************************************************************************************/
+
+
+/* This function assume we have already established that the group is NOT semiprimitive and that we know its block systems.*/
+
+PolyVsExpConj := function(L, ListOfAllBlocks)
+	for B in ListOfAllBlocks do
+		KerB := BlocksKernel(L,B);
+		PointWiseStabB := KerB;
+		for b in B do
+			PointWiseStabB := PointWiseStabB  meet Stabiliser(KerB,b);
+			if IsTrivial(PointWiseStabB ) then break; end if;
+		end for;
+		if not IsTrivial(PointWiseStabB ) then return "ConjExponential"; end if;
+	end for;
+	return "ConjPolynomial";
+end function;
+
+/************************************************************************************* MAIN TEST  *************************************************************************************************************/
+
+/* INPUT: */
+/* Unique MAGMA Database ID (d,n) of the transitive permutation group whose graph growth you wish to compute. */
+/* d = degree of the group */
+/* n = index of the group in the list of all transitive permutation groups of the same degree */
+
+GraphGrowth := function(d,n)
+
+	I := <d,n>;
+	L := TransitiveGroup(d,n);
+	L1 := Stabiliser(L,1);
+	s := Order(L1);
+		
+	/* Inexpensive Tests: Prime Degree, Regular */
+	/* Groups known to have Constant Graph Growth: Sn on order pairs, PSL on Subspaces (not 2-transitive) and Frobenius. */
+
+	if IsPrime(d) or (IsTrivial(L1)) or (I in CONSTANT) then
+		return "Constant";
+	end if;
+
+	/* Groups known to be have Exponential Graph Growth */
+	if I in EIGEN then
+		return "Exponential";
+	end if;
+	
+	AllBlocks := [B : B in AllPartitions(L)];
+
+	if #AllBlocks eq 0 then
+
+		/* In this case, L is primitive */
+		/* We test whether the group is 2-transitive, HA-type or if it satisfies the FRJ theorem on regular nilpotent normal subgroups */
+
+		if IsTransitive(L,2) then return "Constant"; end if;
+
+		if IsAbelian(Socle(L)) then return "Constant"; end if;
+
+		if RegNilSubGrpTest(L) then return "Constant"; end if;
+
+		/* Final test for this branch: p-graph-restrictiveness */
+		/* It suffices to consider only the primes p which divide the order of the point-stabiliser */
+
+		if IspGraphResALLSemiPrimitive(L) then
+			return "Constant";
+		else
+			return "ConjConstant";
+		end if;
+				
+		
+	else
+		/* Block Complement Theorem */
+		/* We also keep track of semiregularity of kernels of maximal block systems in order to test for semiprimitivity later if needed. */
+
+		NonSemiRegularKernelMaxBlock := false;
+		MaxBlocks :=  [ B : B in AllBlocks | not exists{ C : C in AllBlocks | B subset C and B ne C } ];
+		for B in MaxBlocks do
+			KerB := BlocksKernel(L,B);
+			if IsSemiregular(KerB) then
+				continue;
+			else
+				NonSemiRegularKernelMaxBlock := true;
+				BComp := [i : i in [1..d] | not i in B];
+				PointWiseStabOfBComp := KerB;
+				for i in BComp do
+					PointWiseStabOfBComp := PointWiseStabOfBComp meet Stabiliser(KerB,i);
+					if IsTrivial(PointWiseStabOfBComp) then
+						break;
+					end if;
+				end for;
+				if not IsTrivial(PointWiseStabOfBComp) then return "Exponential"; end if;
+			end if;
+		end for;
+
+		/* Further tests for Polynomial or Constant graph growth depending on whether L is semiprimitive or not */
+	
+		if NonSemiRegularKernelMaxBlock then
+			/* In this case, L is NOT semiprimitive (there exists a maximal block whose corresponding kernel is not semiregular) */
+			/* By the PSV Conjecture, L does not have Constant Graph Growth */
+			
+			/* Testing whether L is Weakly P Sub Regular */
+
+			if not IsPrime(s) then
+				return PolyVsExpConj(L, AllBlocks);
+
+			else
+				for i in [2..d] do
+					LL := sub<L|L1,Stabiliser(L,i)>;
+					if #(1^LL join i^LL) eq d then return "Polynomial"; end if;
+				end for;
+			end if;
+
+			/* It follows that the graph growth of L unknown, so we now determine whether it should be Poly or Exp */
+
+			return PolyVsExpConj(L, AllBlocks);
+					
+
+		else
+			/* In this case, L is Semiprimitive */
+			Plinths := [ NN : NN in MinimalNormalSubgroups(L) | IsTransitive(NN)];
+			if #Plinths gt 1 then return "Constant"; end if;
+
+			if RegNilSubGrpTest(L) then return "Constant"; end if;
+
+			/* Final test for this branch: p-graph-restrictiveness */
+			/* It suffices to consider only the primes p which divide the order of the point-stabiliser */
+
+			if IspGraphResALLSemiPrimitive(L) then
+				return "Constant";
+			else
+				return "ConjConstant";
+			end if;
+				
+		end if;
+
+	end if;
+
+end function;
+

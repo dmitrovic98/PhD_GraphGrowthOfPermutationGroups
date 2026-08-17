@@ -1,0 +1,48 @@
+/* Running the Graph Growth Test on the MAGMA Database of Transitive Permutation Groups */
+/* We partition IDs in 6 categories Constant, Polynomial, Exponential and Conjectured to be Constant, Polynomial and Exponential. */
+/* We save this partition into a file called "GraphGrowth_Degreed.txt" with d being the degree we tested */
+/* We also print out the relevant numerical data in the following order for the TABLE in Ch9 of my PhD Thesis (Graph Growth of Permutation Groups) */
+/* DEG - TOTAL - CONSTANT - POLYNOMIAL - EXPONENTIAL - ConjCONSTANT - ConjPOLYNOMIAL - ConjEXPONENTIAL */
+/* We will save this list of numbers in separate master file (to build the table from later) */
+
+load "GraphGrowthTest.txt";
+
+GraphGrowthTestDegree := function(d)
+	Constant := [];
+	Polynomial := [];
+	Exponential := [];
+	ConjConstant := [];
+	ConjPolynomial := [];
+	ConjExponential := [];
+
+	List := TransitiveGroups(d);
+	
+	for n in [1..#List] do
+
+		s := GraphGrowth(d,n);
+
+		if s eq "Constant" then Constant := Append(Constant,n);
+		elif s eq "Polynomial" then Polynomial := Append(Polynomial,n);
+		elif s eq "Exponential" then Exponential := Append(Exponential,n);
+		elif s eq "ConjConstant" then ConjConstant := Append(ConjConstant, n);
+		elif s eq "ConjPolynomial" then ConjPolynomial := Append(ConjPolynomial,n);
+		elif s eq "ConjExponential" then ConjExponential := Append(ConjExponential,n);
+		end if;
+
+	end for;
+
+	NameOfFile := "GraphGrowth_Degree" cat Sprint(d) cat ".txt";
+	Write(NameOfFile, "Degree" cat Sprint(d) cat "_Constant " cat " := " cat Sprint(Constant) cat ";");
+	Write(NameOfFile, "Degree" cat Sprint(d) cat "_Polynomial " cat " := " cat Sprint(Polynomial) cat ";");
+	Write(NameOfFile, "Degree" cat Sprint(d) cat "_Exponential " cat " := " cat Sprint(Exponential) cat ";");
+	Write(NameOfFile, "Degree" cat Sprint(d) cat "_ConjConstant " cat " := " cat Sprint(ConjConstant) cat ";");
+	Write(NameOfFile, "Degree" cat Sprint(d) cat "_ConjPolynomial " cat " := " cat Sprint(ConjPolynomial) cat ";");
+	Write(NameOfFile, "Degree" cat Sprint(d) cat "_ConjExponential " cat " := " cat Sprint(ConjExponential) cat ";");
+	
+	str := Sprint(d) cat " " cat Sprint(#List) cat " " cat Sprint(#Constant) cat " " cat Sprint(#Polynomial) cat " " cat Sprint(#Exponential) cat " " cat Sprint(#ConjConstant) cat " " cat Sprint(#ConjPolynomial) cat " " cat Sprint(#ConjExponential);
+	
+	Write("GraphGrowth_TABLE.txt", str);
+
+	return str;
+
+end function;
