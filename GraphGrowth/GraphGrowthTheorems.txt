@@ -9,7 +9,7 @@ IsSemiPrimitive := function(L)
    return true;
 end function;
 
-/********************************************************** Plinths *************************************************************************/
+/********************************************************************************* Plinths ************************************************************************************************/
 
 /* Theorem 1.4 (Guidici, Morgan - A theory of semiprimitive groups)
 /* Let L be a finite semiprimitive group. If L has at least two plinths, then the Graph Growth of L is Constant */
@@ -24,7 +24,7 @@ SemiPrimWithTwoPlinths := function(L)
 	end if;
 end function;
 
-/********************************************************** Regular Normal Nilpotent Subgroup *************************************************************************/
+/********************************************************************************* Regular Normal Nilpotent Subgroup *************************************************************************/
 
 /* Theorem 1.1 (Guidici, Morgan - Locally Semiprimitive graphs and a Theorem of Weiss) */
 /* Let L be a semiprimitive permutation group of degree d. If (d,6)=1 and L contains a regular normal nilpotent subgroup, then the Graph Growth of L is constant. */
@@ -39,7 +39,7 @@ IsNilSubGrpRes := function(L)
 	end if;
 end function;
 
-/* Corollary 1.3 (Guidic, Morgan - Locally Semiprimitive graphs and a Theorem of Weiss) */
+/* Corollary 1.3 (Guidici, Morgan - Locally Semiprimitive graphs and a Theorem of Weiss) */
 /* Let L be a semiprimitive permutation group. Let R be a normal regular nilpotent subgroup of L.*/
 /* Then there exist normal subgroups F < R < J such that J/F = S3^n or A4^m (for some integers n,m), */
 /* OTHERWISE, L is Graph-Restrictive. */
@@ -83,25 +83,19 @@ IsFRJNilpotentRes := function(L)
 end function;
 
 
-/******************************************************************************* 2-transitive groups *******************************************************************************************/
+/******************************************************************************* 2-transitive groups ***********************************************************************************************/
 
 /* Theorem 6 (Potočnik, Spiga, Verret - On graph-restrictive permutation groups) */
-/* If L is 2-transitive, then L is graph-restrictive (i.e., the graph growth of L is constant) */
+/* If L is 2-transitive, then L is Constant Graph Growth (i.e., the graph growth of L is constant) */
 
 IsTwoTransitive := function(L)
 	return IsTransitive(L,2);
 end function;
 
-/* ??? */
+/********************************************************************* PSL(2,q) Theorem of Trofimov and Weiss ***************************************************************************************/
 
-HasPrimeDegree := function(L)
-	p := Degree(L);
-	return IsPrime(p);
-end function;
+/* Theorems by V. I. Trofimov and R. M. Weiss - Graphs with a locally linear group of automorphisms; The group E6(q) and graphs with a locally linear group of automorphisms. */
 
-/******************************************************************************* PSL(2,q) Theorem of Trofimov and Weiss *******************************************************************************************/
-
-/* Theorems by Trofimov and Weiss - LocallyLinearGraphs and TrofimovWeiss-E6q */
 /* Let L be a transitive permutation group. If there exist integers n, m <= n/2 and a prime power q such that L contains a normal subgroup (permutation) isomorphic to PSL(n,q) in its natural action on the set of m-subspaces of Fq^n, then the Graph Growth of L is Constant. */
 
 /* REMARKS */
@@ -190,9 +184,9 @@ end function;
 PSLOnSubSpacesLIST := [<35,36>,<35,44>];
 
 
-/******************************************************************************* Spiga's Affine Type Result *******************************************************************************************/
+/******************************************************************************* Affine Type Result *******************************************************************************************/
 
-/* Theorem 1.1 (Spiga - LOCALLY PRIMITIVE GRAPHS OF AFFINE TYPE) */
+/* Theorem 1.1 (Spiga - An application of the Local C(G,T) Theorem to a conjecture of Weiss) */
 /* Let L be a primitive permutation group. If L contains a regular abelian group, then the Graph Growth of L is Constant. */
 
 IsHATypeRes := function(L)
@@ -208,7 +202,15 @@ IsHATypeRes := function(L)
 	end if;
 end function;
 
-/******************************************************************************* Spiga's Twisted Wreath Product Result *******************************************************************************************/
+/* Remark: A transitive permutation group with prime degree is always of HA type. */
+/* Corollary: If transitive permutation group with prime degree has constant graph growth */.
+
+HasPrimeDegree := function(L)
+	p := Degree(L);
+	return IsPrime(p);
+end function;
+
+/********************************************************************* Twisted Wreath Product Result ******************************************************************************************/
 
 /* Theorem 1 (Spiga - On G-locally primitive graphs of locally Twisted Wreath type and a conjecture of Weiss) */
 /* Let L be a primitive permutation group with a regular non-abelian socle. The Graph Growth of L is Constant. */
@@ -278,7 +280,7 @@ end function;
 /* Groups of this type with degree at most 48 */
 SnOnOrderedPairsLIST := [<6,2>,<12,8>,<20,30>,<30,164>,<42,412>];
 
-/******************************************************************************* (WEAKLY) p-SUB-REGULAR GROUPS *****************************************************************************************************************/
+/********************************************************************* (WEAKLY) p-SUB-REGULAR GROUPS *************************************************************************************************/
 
 /* A permutation group L is p-sub-regular if it is transitive and there exist two points x and y such that L is generated by Lx and Ly and the action of Lx on Y := y^(Lx) is permutation isomorphic to Cp */
 /* Equivalently */
@@ -318,7 +320,7 @@ IsWeaklyPSubRegular := function(L)
     	return false;
 end function;
 
-/******************************************************************************* p-graph-restrictive *************************************************************************************************************************/
+/********************************************************************************* p-graph-restrictive **********************************************************************************************/
 
 /* A permutation group L is p-graph-restrictive if it is transitive and there exists a constant c := c(p,L) such that for all locally-L pairs (X,G), the largest power of p dividing the order of a stabiliser of an arc of X in G is at most c */
 
@@ -367,7 +369,7 @@ IspResAllp := function(L);
 end function;
 
 
-/******************************************************************************* WREATH PRODUCTS *************************************************************************************************************************/
+/********************************************************************************* WREATH PRODUCTS ***************************************************************************************************/
 
 /* Theorem 7 (Potočnik, Spiga, Verret - ON THE ORDER OF ARC-STABILISERS IN ARC-TRANSITIVE GRAPHS WITH PRESCRIBED LOCAL GROUP) */
 /* If L is permutation isomorphic to a wreath product of non-trivial transitive permutation groups R and T in its imprimitive action, then the graph growth of L is exponential */
@@ -439,7 +441,7 @@ IsImpWreathProduct := function(L)
 	return false;
 end function;
 
-/******************************************************************************* TWO BLOCKS THEOREMS *************************************************************************************************************************/
+/******************************************************************************* TWO BLOCKS THEOREMS *************************************************************************************************/
 
 /* Corollary 9 (Potočnik, Spiga, Verret - ON THE ORDER OF ARC-STABILISERS IN ARC-TRANSITIVE GRAPHS WITH PRESCRIBED LOCAL GROUP)) */
 /* Let L be a transitive NON-REGULAR (i.e., not semiregular) permutation group admitting a block system with two blocks A and B */
@@ -465,7 +467,7 @@ TwoBlocks := function(L)
 	return true, 1;
 end function;
 
-/******************************************************************************* Thesis: BLOCK COMPLEMENT THEOREM ************************************************************************************************************************/
+/********************************************************************** Thesis: BLOCK COMPLEMENT THEOREM ***********************************************************************************************/
 
 /* Let L <= Sym(X) be a transitive permutation group. If B is a PROPER block for L and L_(X\B) neq 1, then the Graph Growth of L is Exponential */
 /* Note that if C subset B, then X\B subset X\C and L_(X\C) <= L_(X\B) */
@@ -488,7 +490,7 @@ BlockComplementTheorem := function(L)
 	return false;
 end function;
 
-/******************************************************************************* Thesis: Sum-zero Permutation Groups *************************************************************************************************************************/
+/******************************************************************** Thesis: Sum-zero Permutation Groups **********************************************************************************************/
 
 /* Construting sum-zero groups between Sigma0(K,N) and K wr G where K is abelian with exponent 2 */
 
@@ -512,9 +514,7 @@ TransSumZeroExp2 := function(k,N,G)
 end function;
 
 
-
-
-/***************************** PhD Thesis (Section) *****************************/
+/***************************** PhD Thesis: Exponent 2 with 3 blocks *****************************/
 
 /* If L satisfies Sigma0(Z2^k,1) <= L <= (Z2^k) wr S3, then the graph growth of L is exponential */
 /* The degree of this group is 3 x 2^k, so we test k in {1,2,3}. We exclude k = 4 (corresponding to degree 48) since the method of TransitiveGroupIdentification has only been implemented to degree 47 */
@@ -532,10 +532,7 @@ Output:
 */
 
 
-
-
-
-/***************************** PhD Thesis (Section) *****************************/
+/***************************** PhD Thesis: Exponent 2 with 4 blocks *****************************/
 
 /* If L satisfies Sigma0(Z2^k,1) <= L <= (Z2^k) wr S4, then the graph growth of L is exponential */
 /* The degree of this group is 4 x 2^k, so we test k in {1,2,3}. */
@@ -553,9 +550,7 @@ Output:
 */
 
 
-
-
-/***************************** PhD Thesis (Section) *****************************/
+/***************************** PhD Thesis: Exponent 2 with odd number of blocks *****************************/
 
 /* If L satisfies Sigma0(Z2^k,C_(2m+1)) <= (Z2^k) wr D_(2m+1) with m>=2, then the graph growth of L is exponential */
 /* If (2m+1) is not prime, then all of these groups satisfy the hypotheses of the Block Complement Theorem */
@@ -572,7 +567,6 @@ Output:
 	      <46, 28>, <46, 30>, <46, 31> ];
 */
 
-
 /* ListCnDn2 := [ L : L in TransSumZeroExp2(2,CyclicGroup(2*m+1),DihedralGroup(2*m+1)), m in [2,3,5] | not BlockComplementTheorem(L) ];
 Output:
 	    [ <20, 190>, <20, 240>, <20, 260>,
@@ -580,7 +574,6 @@ Output:
 	      <44, 564>, <44, 774>, <44, 751> ];
 
 */
-
 
 /* ListCnDn3 := [ L : L in TransSumZeroExp2(3,CyclicGroup(2*m+1),DihedralGroup(2*m+1)), m in [2] | not BlockComplementTheorem(L) ];
 Output:	[ <40, 14020>, <40, 18338>, <40, 18337>];
@@ -608,7 +601,7 @@ Output:	[ <40, 14020>, <40, 18338>, <40, 18337>];
 		]; 
 */
 
-/******************************************************************************* Thesis: GRAPH GROWTH CONJECTURES **********************************************************************************************************************/
+/******************************************************************************* Thesis: GRAPH GROWTH CONJECTURES *************************************************************************************/
 
 GraphGrowthConjectures := function(L)
 	if IsSemiPrimitive(L) then print "L is semiprimitive"; print "Constant Growth by the PSV Conjecture"; return ""; end if;
