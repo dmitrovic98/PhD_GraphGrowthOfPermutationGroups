@@ -364,27 +364,3 @@ Then one needs to run the main search algorithm with some appropriate choice of
 * The main search function stops as soon as it finds a suitable nonzero vector, so the returned radius is the first radius at which the search succeeds.
 * The voltage data must be ordered consistently with `CoTreeARCS`.
 * The supplied $T_{120}$ data are intended both as a reproducible example and as a template for adapting the code to other voltage covers.
-
-
-
-## Source and attribution
-
-The mathematical basis for the computation is the Extension-by-zeros Lemma stated in (Lemma 7.2.1 in my doctoral thesis).
-
-The implementation of the voltage-cover search algorithm is part of the computational work accompanying the thesis.
-
-If the code is reused or modified, please cite my doctoral thesis:
-
-> **Đ. Mitrović, *Graph Growth of Permutation Groups*, University of Auckland, 2026].**
-
-
-## Requirements
-
-The code requires **Magma** with support for:
-
-* Linear Algebra (finite and integer matrix computations, constructions of vector spaces and modules, kernel computations);
-* Graph Theory (graph constructions, computation of the adjacency matrix);
-
-All of the above are contained in the standard installation of **Magma**. No additional external packages are required.
-
-The code has been tested using MAGMA V2.29-6.
