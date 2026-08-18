@@ -59,7 +59,7 @@ The directory also contains the data required to apply the criterion to the grap
 The main files are:
 
 * `LiftingCriterion.txt` — implementation of the lifting criterion and its auxiliary functions;
-* `T120_LiftingData.txt` — graph, voltage, homology, and automorphism data for the (T_{120}) example.
+* `T120_LiftingData.txt` — graph, voltage, homology, and automorphism data for the $T_{120}$ example.
 
 See [`LiftingCriterion/README.md`](LiftingCriterion/README.md) for the full description and instructions for reproducing the computations.
 
