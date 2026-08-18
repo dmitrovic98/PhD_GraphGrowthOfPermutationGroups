@@ -145,3 +145,11 @@ The code requires **MAGMA**. No additional external packages are required.
 The code was tested using **MAGMA V2.29-6**.
 
 For detailed requirements and usage instructions, see the README file in each individual directory.
+
+## License
+
+The source code in this repository is licensed under the GNU General Public License Version 3 (GPLv3).
+
+Copyright © 2026 Đorđe Mitrović.
+
+If you use the code or computational data from this repository in academic work, please cite the accompanying repository and doctoral thesis.
